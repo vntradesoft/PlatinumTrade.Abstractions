@@ -1,4 +1,4 @@
-﻿using Pt.Okx.Abstractions.Indicators.BuiltIn;
+using Pt.Okx.Abstractions.Indicators.BuiltIn;
 using Pt.Okx.Shared.Indicators.Enums;
 using Pt.Okx.Shared.Indicators.Models;
 using Pt.Okx.Abstractions.Indicators.Services;
@@ -8,7 +8,7 @@ namespace Pt.Okx.Abstractions.Indicators.Base
     /// <summary>
     /// Base class for indicator calculators. It manages indicator identity, configuration, and buffers.
     /// </summary>
-    public abstract class CalcIndBase : IIndicator, IIndicatorMethodCommon
+    public abstract class IndicatorBase : IIndicator, IIndicatorMethodCommon
     {
         private string _uniqueId = string.Empty;
 
@@ -43,7 +43,7 @@ namespace Pt.Okx.Abstractions.Indicators.Base
         /// <param name="manager">Manager responsible for indicator buffers and registration.</param>
         /// <param name="config">Input configuration for the indicator.</param>
         /// <param name="propertyOptions">Optional customization applied after default properties are created.</param>
-        protected CalcIndBase(IIndicatorFactory factory, IIndicatorManager manager, IndicatorConfig config, Action<IndicatorProperty>? propertyOptions = null)
+        protected IndicatorBase(IIndicatorFactory factory, IIndicatorManager manager, IndicatorConfig config, Action<IndicatorProperty>? propertyOptions = null)
         {
 
             ArgumentNullException.ThrowIfNull(factory);
