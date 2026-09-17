@@ -1,0 +1,56 @@
+name: Publish Pt.Okx.Abstractions to NuGet
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger when a version tag (e.g., v0.12.0-beta.2) is pushed
+
+permissions:
+  id-token: write  # Required to request the OIDC token from GitHub
+  contents: write  # Required to create a release and upload assets
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x' # Multi-targets net8.0, net9.0, net10.0
+
+      - name: Restore Dependencies
+        run: dotnet restore Pt.Okx.Abstractions/Pt.Okx.Abstractions.csproj
+
+      - name: Build Project
+        run: dotnet build Pt.Okx.Abstractions/Pt.Okx.Abstractions.csproj -c Release --no-restore
+
+      # Pack to generate .nupkg file
+      - name: Pack Package
+        run: dotnet pack Pt.Okx.Abstractions/Pt.Okx.Abstractions.csproj -c Release --no-build -o ./dist
+
+      # Log in to NuGet.org using OIDC and exchange for a short-lived key
+      - name: NuGet Login
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: vntradesoft # NuGet.org Username or Organization
+
+      # Push package to NuGet.org
+      - name: Push to NuGet
+        run: |
+          dotnet nuget push ./dist/*.nupkg \
+            --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+
+      # Create GitHub Release and upload package asset
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./dist/*.nupkg
+          prerelease: true # Mark as pre-release for beta/rc versions
+          generate_release_notes: true

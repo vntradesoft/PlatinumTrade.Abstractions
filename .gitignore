@@ -1,0 +1,18 @@
+## Build folders
+bin/
+obj/
+dist/
+
+## IDE and user settings
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## Local sync scripts
+sync.ps1
